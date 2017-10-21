@@ -1,5 +1,6 @@
 {
   "name": "slash-ballers",
+  "version": "0.0.1",
   "scripts": {
     "start": "micro index.js"
   },
