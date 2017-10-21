@@ -9,6 +9,10 @@ exports.slashBallers = (req, res) => {
 
   const baller = NBA.findPlayer(query.text);
 
+  if (!baller || !baller.firstName) {
+    return res.send(`Couldn't find player with name ${query.text}`)
+  } 
+
   const data = NBA.stats.playerInfo({ PlayerID: baller.playerId })
     .then((stats) => {
       if (stats && stats.playerHeadlineStats) {
