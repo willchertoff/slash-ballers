@@ -1,0 +1,10 @@
+{
+  "name": "slash-ballers",
+  "scripts": {
+    "start": "micro index.js"
+  },
+  "dependencies": {
+    "micro": "^9.0.0",
+    "nba": "^3.5.1"
+  }
+}
