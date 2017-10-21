@@ -1,33 +1,30 @@
 const NBA = require('nba')
 const url = require('url')
 
-module.exports = async request => {
-  const query = url.parse(request.url, true).query
-
+exports.slashBallers = (req, res) => {
+  const query = url.parse(req.url, true).query
   if (!query.text) {
-    return 'You must supply a players name'
+    return res.send('You must supply a players name')
   }
 
-  const baller = await NBA.findPlayer(query.text)
+  const baller = NBA.findPlayer(query.text);
 
-  const stats = baller ? await NBA.stats.playerInfo({ PlayerID: baller.playerId }) : false
+  const data = NBA.stats.playerInfo({ PlayerID: baller.playerId })
+    .then((stats) => {
+      if (stats && stats.playerHeadlineStats) {
+        const {
+          pts,
+          ast,
+          reb,
+        } = stats.playerHeadlineStats[0]
 
-  if (stats && stats.playerHeadlineStats) {
-  	const {
-  		pts,
-  		ast,
-  		reb,
-  	} = stats.playerHeadlineStats[0]
+        const name = baller.firstName + ' ' + baller.lastName
 
-  	const name = baller.firstName + ' ' + baller.lastName
-
-  	return `
-  		${name} had ${pts ? pts : 'unfetchable'} points,
-  		${reb ? reb : 'unfetchable'} rebounds, and ${ast ? ast :`unfetchable`} assits.
-  	`
-  }
-
-  return `
-  	Couldn't find ${query.text}. I'm so sorry :(
-  `
+        const message = `
+          ${name} had ${pts ? pts : 'unfetchable'} points,
+          ${reb ? reb : 'unfetchable'} rebounds, and ${ast ? ast :`unfetchable`} assits.
+        `
+        res.send(message);
+      }
+    });
 }
